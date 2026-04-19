@@ -9,12 +9,17 @@ export default function Index() {
   const subscribe = async () => {
     const isAvailable = await Pedometer.isAvailableAsync();
     setIsPedometerAvailable(String(isAvailable));
-
     if (isAvailable) {
+      const end = new Date();
+      const start = new Date();
+      start.setHours(0,0,0,0);
+      const pastStepCountResult = Pedometer.getStepCountAsync(start, end);
+      setPastStepCount((await pastStepCountResult).steps);
       return Pedometer.watchStepCount(async () => {
+        // Might need to uncomment this depending on how the app handles the shift from day to day.
         const end = new Date();
         const start = new Date();
-        start.setDate(end.getDate() - 1);
+        start.setHours(0,0,0,0);
         const pastStepCountResult = Pedometer.getStepCountAsync(start, end);
         setPastStepCount((await pastStepCountResult).steps);
       });
@@ -27,6 +32,7 @@ export default function Index() {
       subscription.then(sub => sub?.remove());
     } }
   }, []);
+
 
   return (
     <View style={styles.container}>
