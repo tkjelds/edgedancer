@@ -18,7 +18,7 @@ export async function populateDB() {
     try {
         const db = await getDB();
 
-        const now = Date.now();
+        const now = new Date().setHours(0,0,0,0);
 
         await db.execAsync(`
             INSERT OR IGNORE INTO STEPTRACKER (date, steps, lastUpdated, finished)

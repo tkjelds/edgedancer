@@ -6,9 +6,40 @@ import { useEffect, useState } from 'react';
 export function useStepTrackers() {
   const [stepTrackers, setStepTrackers] = useState<stepTracker[]>([]);
 
+  const fetchStepTrackers = () => {
+    return stepTrackerRepository
+      .getStepTrackers()
+      .then(setStepTrackers);
+  };
+
   useEffect(() => {
-    stepTrackerRepository.getStepTrackers().then(setStepTrackers);
+    fetchStepTrackers();
   }, []);
 
-  return stepTrackers;
+  return { stepTrackers, refetch: fetchStepTrackers };
+}
+// export function useExistsStepTracker(date: Date) {
+//   const [exists, setExists] = useState<boolean>(false);
+
+//   useEffect(() => {
+//     stepTrackerRepository.exists(date.setHours(0,0,0,0)).then(setExists);
+//   }, [date]);
+
+//   return exists;
+// }
+
+export function useGetStepTrackerByDate(date: Date) {
+  const [stepTracker, setStepTracker] = useState<stepTracker|null>(null);
+
+  useEffect(() => {
+    stepTrackerRepository.getStepTrackerbyDate(date).then(setStepTracker);
+  }, [date]);
+
+  return stepTracker;
+}
+
+export function useAddOrUpdateStepTracker() {
+  return async (stepTracker: stepTracker) => {
+    await stepTrackerRepository.addOrUpdateStepTracker(stepTracker);
+  }
 }

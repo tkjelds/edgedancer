@@ -1,9 +1,17 @@
 import { useStepTrackers } from "@/hooks/stepTrackerHook";
+import { stepTracker } from "@/models/stepTracker";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import { Text, View } from "react-native";
 
 export default function History() {
-  const stepTrackers = useStepTrackers();
-  stepTrackers.map(st => console.log(st))
+  const { stepTrackers, refetch } = useStepTrackers();
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
   return (
     <View
       style={{

@@ -1,43 +1,70 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Pedometer } from 'expo-sensors';
+import {
+  useAddOrUpdateStepTracker,
+  useGetStepTrackerByDate,
+} from '@/hooks/stepTrackerHook';
 
 export default function Index() {
-  const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
-  const [pastStepCount, setPastStepCount] = useState(0);
+  const [isPedometerAvailable, setIsPedometerAvailable] = useState<string>('checking');
+  const [pastStepCount, setPastStepCount] = useState<number>(0);
 
-  const subscribe = async () => {
-    const isAvailable = await Pedometer.isAvailableAsync();
-    setIsPedometerAvailable(String(isAvailable));
-    if (isAvailable) {
-      const end = new Date();
-      const start = new Date();
-      start.setHours(0,0,0,0);
-      const pastStepCountResult = Pedometer.getStepCountAsync(start, end);
-      setPastStepCount((await pastStepCountResult).steps);
-      return Pedometer.watchStepCount(async () => {
-        // Might need to uncomment this depending on how the app handles the shift from day to day.
-        const end = new Date();
-        const start = new Date();
-        start.setHours(0,0,0,0);
-        const pastStepCountResult = Pedometer.getStepCountAsync(start, end);
-        setPastStepCount((await pastStepCountResult).steps);
-      });
-    }
-  };
+  const todayStart = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, [Date.now()]);
+
+  const addOrUpdateStepTracker = useAddOrUpdateStepTracker();
+  const getStepTrackerByDate = useGetStepTrackerByDate(todayStart);
+  
 
   useEffect(() => {
-    const subscription = subscribe();
-    return () => {if(subscription) {
-      subscription.then(sub => sub?.remove());
-    } }
-  }, []);
+    let subscription: any;
 
+    const setupPedometer = async () => {
+      const isAvailable = await Pedometer.isAvailableAsync();
+      setIsPedometerAvailable(String(isAvailable));
+
+      if (!isAvailable) return;
+
+      const end = new Date();
+      const { steps } = await Pedometer.getStepCountAsync(todayStart, end);
+      setPastStepCount(steps);
+
+      subscription = Pedometer.watchStepCount(async () => {
+        const end = new Date();
+        const { steps } = await Pedometer.getStepCountAsync(todayStart, end);
+
+        setPastStepCount(steps);
+
+        addOrUpdateStepTracker({
+          date: todayStart,
+          steps,
+          finished: steps >= 10000,
+        });
+      });
+    };
+
+    setupPedometer();
+
+    return () => {
+      subscription?.remove?.();
+    };
+  }, [todayStart, addOrUpdateStepTracker]);
 
   return (
     <View style={styles.container}>
-      <Text>Pedometer.isAvailableAsync(): {isPedometerAvailable}</Text>
-      <Text>Steps taken the last 24 hours: {pastStepCount}</Text>
+      <Text>
+        Pedometer.isAvailableAsync(): {isPedometerAvailable}
+      </Text>
+      <Text>
+        Steps taken in the last 24 hours: {pastStepCount}
+      </Text>
+      <Text>
+        Step tracker for today: {getStepTrackerByDate ? JSON.stringify(getStepTrackerByDate) : 'No data'}
+      </Text>
     </View>
   );
 }
