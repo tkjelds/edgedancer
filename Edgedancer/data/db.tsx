@@ -1,9 +1,9 @@
 import * as SQLite from 'expo-sqlite';
 
-const DB_NAME = "stepTracker.db";
+const DB_NAME = "STEPTRACKER";
 let db: SQLite.SQLiteDatabase | null = null;
 
-export async function getDB() {
+export async function getDB(): Promise<SQLite.SQLiteDatabase> {
   if (!db) {
     db = await SQLite.openDatabaseAsync(DB_NAME);
   }
