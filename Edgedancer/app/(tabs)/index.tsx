@@ -5,8 +5,9 @@ import {
   useAddOrUpdateStepTracker,
   useGetStepTrackerByDate,
 } from '@/hooks/stepTrackerHook';
-import { syncPedometerLast7Days } from '../services/sync';
+import { syncSteps7Days } from '../services/sync';
 import { useFocusEffect } from "expo-router";
+import { RepoProvider, useStepRepo } from '@/providers/repositoryProviders';
 
 export default function Index() {
   const [isPedometerAvailable, setIsPedometerAvailable] = useState<string>('checking');
@@ -20,7 +21,7 @@ export default function Index() {
 
   const addOrUpdateStepTracker = useAddOrUpdateStepTracker();
   const getStepTrackerByDate = useGetStepTrackerByDate(todayStart);
-  
+  const repository = useStepRepo();
 
   useEffect(() => {
     let subscription: any;
@@ -57,11 +58,12 @@ export default function Index() {
 
   useFocusEffect(
     useCallback(() => {
-      syncPedometerLast7Days();
+      syncSteps7Days(repository);
     }, [])
   );
 
   return (
+    <RepoProvider>
     <View style={styles.container}>
       <Text>
         Pedometer.isAvailableAsync(): {isPedometerAvailable}
@@ -72,8 +74,8 @@ export default function Index() {
       <Text>
         Step tracker for today: {getStepTrackerByDate ? JSON.stringify(getStepTrackerByDate) : 'No data'}
       </Text>
-
     </View>
+    </RepoProvider>
   );
 }
 

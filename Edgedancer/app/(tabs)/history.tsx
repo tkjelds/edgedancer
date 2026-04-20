@@ -4,13 +4,12 @@ import { useFocusEffect } from "expo-router";
 import { use, useCallback, useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { stepTrackerRepository } from "@/repositories/stepTrackerRepository";
-import { syncPedometerLast7Days } from "../services/sync";
+import { syncSteps7Days } from "../services/sync";
+import { useStepRepo } from "@/providers/repositoryProviders";
 
 
 export default function History() {
-  // const { stepTrackers, refetch } = useStepTrackers();
-  // const updateDB = useUpdateDB();
+  const repository = useStepRepo();
   const [from, setFrom] = useState<Date>(() => {
     const d = new Date();
     d.setDate(d.getDate() - 7);
@@ -26,7 +25,7 @@ export default function History() {
 
   useFocusEffect(
     useCallback(() => {
-      syncPedometerLast7Days();
+      syncSteps7Days(repository);
     }, [])
   );
   // useFocusEffect(

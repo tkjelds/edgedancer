@@ -1,59 +1,60 @@
 import { stepTracker } from '@/models/stepTracker';
 import { toDomain, toRow } from '@/models/stepMapper';
-import { stepTrackerDao } from '@/data/datasource/stepTrackerDao';
+import { IStepTrackerDao } from '@/data/datasource/IstepTrackerDao';
 
-export const stepTrackerRepository = {
+// Inject the interface here 
+export const createStepTrackerRepository = (dao: IStepTrackerDao) => {
+  
+  const stepTrackerExists = async (date: Date): Promise<boolean> => {
+    return await dao.exists(date);
+  };
 
-  async getStepTrackers(): Promise<stepTracker[]> {
-    const rows = await stepTrackerDao.getAll();
-    return rows.map(row => toDomain(row));
-  },
+  const addStepTracker = async (st: stepTracker, finished: boolean): Promise<void> => {
+    const row = toRow(st, finished);
+    await dao.insert(row);
+  };
 
-    async getStepTrackerbyDate(date: Date): Promise<stepTracker|null> {
-      date.setHours(0,0,0,0);
-    const row = await stepTrackerDao.getByDate(date);
-    return row ? toDomain(row) : null;
-  },
+  const updateStepTracker = async (st: stepTracker, finished: boolean): Promise<void> => {
+    const row = toRow(st, finished);
+    await dao.update(row);
+  };
 
-  async addOrUpdateStepTracker(stepTracker: stepTracker, finished: boolean): Promise<void> {
-      // Check to see if a step tracker point exists
-      stepTracker.date.setHours(0,0,0,0);
-      let exists = await stepTrackerExists(stepTracker.date);
-      // If it does, update it. If not, add it.
-      if (exists) {
-          await updateStepTracker(stepTracker, finished);
-        } else {
-          await addStepTracker(stepTracker, finished);
-        }
-    },
-
-    async getSteptrackersBetween(from: Date, to:Date): Promise<stepTracker[]> {
-      from.setHours(0,0,0,0)
-      to.setHours(0,0,0,0)
-      to.setDate(to.getDate());
-      const rows = await stepTrackerDao.getBetweenDates(from, to);
+  return {
+    async getStepTrackers(): Promise<stepTracker[]> {
+      const rows = await dao.getAll();
       return rows.map(row => toDomain(row));
     },
-    
-    // async getUnfinishedSteptrackersBetween(from: Date, to:Date): Promise<stepTracker[]> {
-    //   from.setHours(0,0,0,0)
-    //   to.setHours(0,0,0,0)
-    //   to.setDate(to.getDate() + 1);
-    //   const rows = await stepTrackerDao.getUnfinishedBetweenDates(from, to);
-    //   return rows.map(row => toDomain(row));
-    // }
 
+    async getStepTrackerbyDate(date: Date): Promise<stepTracker | null> {
+      const normalizedDate = new Date(date);
+      normalizedDate.setHours(0, 0, 0, 0);
+      
+      const row = await dao.getByDate(normalizedDate);
+      return row ? toDomain(row) : null;
+    },
 
+    async addOrUpdateStepTracker(st: stepTracker, finished: boolean): Promise<void> {
+      const normalizedDate = new Date(st.date);
+      normalizedDate.setHours(0, 0, 0, 0);
+      
+      const exists = await stepTrackerExists(normalizedDate);
+      
+      if (exists) {
+        await updateStepTracker(st, finished);
+      } else {
+        await addStepTracker(st, finished);
+      }
+    },
+
+    async getSteptrackersBetween(from: Date, to: Date): Promise<stepTracker[]> {
+      const dFrom = new Date(from);
+      dFrom.setHours(0, 0, 0, 0);
+      
+      const dTo = new Date(to);
+      dTo.setHours(0, 0, 0, 0);
+
+      const rows = await dao.getBetweenDates(dFrom, dTo);
+      return rows.map(row => toDomain(row));
+    },
+  };
 };
-
-async function stepTrackerExists(date: Date): Promise<boolean> {
-  return await stepTrackerDao.exists(date);
-}
-async function addStepTracker(stepTracker: stepTracker, finished: boolean): Promise<void> {
-  const row = toRow(stepTracker, finished);
-  await stepTrackerDao.insert(row);
-}
-async function updateStepTracker(stepTracker: stepTracker, finished: boolean): Promise<void> {
-  const row = toRow(stepTracker, finished);
-  await stepTrackerDao.update(row);
-}

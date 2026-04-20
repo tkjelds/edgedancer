@@ -1,13 +1,14 @@
 import { useCallback } from "react";
 import { Text, View } from "react-native";
-import { syncPedometerLast7Days } from "../services/sync";
+import { syncSteps7Days } from "../services/sync";
 import { useFocusEffect } from "expo-router";
+import { useStepRepo } from "@/providers/repositoryProviders";
 
 export default function Alarms() {
-
+  const repository = useStepRepo();
   useFocusEffect(
     useCallback(() => {
-      syncPedometerLast7Days();
+      syncSteps7Days(repository);
     }, [])
   );
 
