@@ -1,10 +1,12 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Pedometer } from 'expo-sensors';
 import {
   useAddOrUpdateStepTracker,
   useGetStepTrackerByDate,
 } from '@/hooks/stepTrackerHook';
+import { syncPedometerLast7Days } from '../services/sync';
+import { useFocusEffect } from "expo-router";
 
 export default function Index() {
   const [isPedometerAvailable, setIsPedometerAvailable] = useState<string>('checking');
@@ -52,6 +54,12 @@ export default function Index() {
       subscription?.remove?.();
     };
   }, [todayStart, addOrUpdateStepTracker]);
+
+  useFocusEffect(
+    useCallback(() => {
+      syncPedometerLast7Days();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>

@@ -1,5 +1,6 @@
 import { stepTracker } from '@/models/stepTracker';
 import { stepTrackerRepository } from '@/repositories/stepTrackerRepository';
+import { Pedometer } from 'expo-sensors';
 import { useEffect, useState } from 'react';
 
 

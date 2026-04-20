@@ -1,13 +1,16 @@
 import { useGetStepTrackersBetween, useStepTrackers } from "@/hooks/stepTrackerHook";
 import { stepTracker } from "@/models/stepTracker";
 import { useFocusEffect } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { stepTrackerRepository } from "@/repositories/stepTrackerRepository";
+import { syncPedometerLast7Days } from "../services/sync";
 
 
 export default function History() {
-  const { stepTrackers, refetch } = useStepTrackers();
+  // const { stepTrackers, refetch } = useStepTrackers();
+  // const updateDB = useUpdateDB();
   const [from, setFrom] = useState<Date>(() => {
     const d = new Date();
     d.setDate(d.getDate() - 7);
@@ -17,15 +20,20 @@ export default function History() {
   const [ to, setTo ] = useState<Date>(() => {
     const d = new Date();
     d.setHours(0,0,0,0);
-    return d;
+    return d; 
   });
   const stepTrackersBetween = useGetStepTrackersBetween(from, to);
 
   useFocusEffect(
     useCallback(() => {
-      refetch();
-    }, [refetch])
+      syncPedometerLast7Days();
+    }, [])
   );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     refetch();
+  //   }, [refetch])
+  // );
 
   return (
     <View

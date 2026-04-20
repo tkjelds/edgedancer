@@ -47,7 +47,5 @@ export const stepTrackerDao = {
             `SELECT * FROM STEPTRACKER WHERE date BETWEEN ? AND ?`,
             [from.toISOString(),to.toISOString()]);
         return await rows as stepTrackerRow[];
-    }
-
-
+    },
 }
