@@ -1,6 +1,6 @@
 export interface stepTrackerRow {
-    date: number;
+    date: string;
     steps: number;
-    lastUpdated: number;
+    lastUpdated: string;
     finished: boolean;
 }

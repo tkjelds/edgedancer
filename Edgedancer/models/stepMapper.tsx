@@ -5,14 +5,14 @@ export function toDomain(DAO: stepTrackerRow): stepTracker{
     return {
         date: new Date(DAO.date),
         steps: DAO.steps,
-        finished: DAO.finished
     }
 }
-export function toRow(stepTracker: stepTracker): stepTrackerRow{
+export function toRow(stepTracker: stepTracker, finished: boolean): stepTrackerRow{
+    stepTracker.date.setHours(0,0,0,0);
     return {
-        date: stepTracker.date.setHours(0,0,0,0),
+        date: stepTracker.date.toISOString(),
         steps: stepTracker.steps,
-        lastUpdated: new Date().getTime(),
-        finished: stepTracker.finished
+        lastUpdated: new Date().toISOString(),
+        finished: finished
     }
 }

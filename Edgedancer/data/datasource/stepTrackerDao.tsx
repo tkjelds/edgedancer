@@ -1,17 +1,16 @@
 import { stepTrackerRow } from "@/models/stepTrackerRow";
 import { getDB } from "../db";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 export const stepTrackerDao = {
     async getAll(): Promise<stepTrackerRow[]> {
         return await getDB().then(db => db.getAllAsync("SELECT * FROM STEPTRACKER")) as stepTrackerRow[]
     },
 
-    async getByDate(date: number): Promise<stepTrackerRow | null> {
+    async getByDate(date: Date): Promise<stepTrackerRow | null> {
         const db = await getDB();
         const row = await db.getFirstAsync(
             `SELECT * FROM STEPTRACKER WHERE date = ?`,
-            [date]
+            [date.toISOString()]
         ) as stepTrackerRow | null;
         
         return row 
@@ -32,13 +31,23 @@ export const stepTrackerDao = {
             [steps, lastUpdated, finished ? 1 : 0, date]
         ));
     },
-    async exists(date: number): Promise<boolean> {
+    async exists(date: Date): Promise<boolean> {
         const db = await getDB();
         const row = await db.getFirstAsync(
             `SELECT 1 FROM STEPTRACKER WHERE date = ? LIMIT 1`,
-            [date]
+            [date.toISOString()]
         );
 
         return !!row;
+    },
+
+    async getBetweenDates(from: Date, to: Date): Promise<stepTrackerRow[]> {
+        const db = await getDB();
+        const rows = await db.getAllAsync(
+            `SELECT * FROM STEPTRACKER WHERE date BETWEEN ? AND ?`,
+            [from.toISOString(),to.toISOString()]);
+        return await rows as stepTrackerRow[];
     }
+
+
 }

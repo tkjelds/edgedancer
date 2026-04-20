@@ -42,8 +42,7 @@ export default function Index() {
         addOrUpdateStepTracker({
           date: todayStart,
           steps,
-          finished: steps >= 10000,
-        });
+        }, false);
       });
     };
 
@@ -65,6 +64,7 @@ export default function Index() {
       <Text>
         Step tracker for today: {getStepTrackerByDate ? JSON.stringify(getStepTrackerByDate) : 'No data'}
       </Text>
+
     </View>
   );
 }

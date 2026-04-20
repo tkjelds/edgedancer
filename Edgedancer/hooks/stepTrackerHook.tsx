@@ -39,7 +39,7 @@ export function useGetStepTrackerByDate(date: Date) {
 }
 
 export function useAddOrUpdateStepTracker() {
-  return async (stepTracker: stepTracker) => {
-    await stepTrackerRepository.addOrUpdateStepTracker(stepTracker);
+  return async (stepTracker: stepTracker, finished: boolean) => {
+    await stepTrackerRepository.addOrUpdateStepTracker(stepTracker, finished);
   }
 }
