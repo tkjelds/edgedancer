@@ -30,13 +30,21 @@ export async function populateDB() {
         const db = await getDB();
 
         const now = new Date().setHours(0,0,0,0);
+        const dates = Array.from({ length: 10}, (_, i) => {
+            const date = new Date();
+            date.setHours(0,0,0,0);
+            date.setDate(date.getDate() - i);
+            return date;
+        });
+        for (const date of dates) {
+            await db.runAsync(`
+                INSERT OR IGNORE INTO STEPTRACKER (date, steps, lastUpdated, finished)
+                VALUES (?, ?, ?, ?)
+                `,
+                [date.toISOString(), 10000, new Date().toISOString(), 1]
+            );
+        }
 
-        await db.runAsync(`
-            INSERT OR IGNORE INTO STEPTRACKER (date, steps, lastUpdated, finished)
-            VALUES (?, ?, ?, ?)
-            `,
-            [new Date().toISOString(), 10000, new Date().toISOString(), 1]
-        );
         console.log("Database populated");
     } catch (error) {
         console.error("Error populating database:", error);

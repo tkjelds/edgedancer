@@ -37,6 +37,15 @@ export function useGetStepTrackerByDate(date: Date) {
 
   return stepTracker;
 }
+export function useGetStepTrackersBetween(from: Date, to: Date) {
+  const [stepTrackers, setStepTrackers] = useState<stepTracker[]>([]);
+
+  useEffect(() => {
+    stepTrackerRepository.getSteptrackersBetween(from, to).then(setStepTrackers);
+  }, [from, to]);
+
+  return stepTrackers;
+}
 
 export function useAddOrUpdateStepTracker() {
   return async (stepTracker: stepTracker, finished: boolean) => {

@@ -27,10 +27,12 @@ export const stepTrackerRepository = {
         }
     },
 
-    async getSteptrackersBetween(from: Date, to:Date){
+    async getSteptrackersBetween(from: Date, to:Date): Promise<stepTracker[]> {
       from.setHours(0,0,0,0)
       to.setHours(0,0,0,0)
-      return await stepTrackerDao.getAll();
+      to.setDate(to.getDate() + 1);
+      const rows = await stepTrackerDao.getBetweenDates(from, to);
+      return rows.map(row => toDomain(row));
     }
     
 };
