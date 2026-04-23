@@ -19,10 +19,6 @@ export default function RootLayout() {
     setup();
   }, []);
 
-  // Optional: Show a splash screen or null until DB is ready
-  if (!dbInitialized) {
-    return null; 
-  }
 
   return (
     <RepoProvider>

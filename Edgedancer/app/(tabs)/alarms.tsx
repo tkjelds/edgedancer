@@ -9,7 +9,7 @@ export default function Alarms() {
   useFocusEffect(
     useCallback(() => {
       syncSteps7Days(repository);
-    }, [])
+    }, [repository])
   );
 
   return (

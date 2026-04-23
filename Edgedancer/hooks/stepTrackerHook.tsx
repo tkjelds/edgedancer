@@ -1,6 +1,6 @@
 import { stepTracker } from '@/models/stepTracker';
 import { useStepRepo } from '@/providers/repositoryProviders';
-import { createContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 
 export function useStepTrackers() {
@@ -25,7 +25,7 @@ export function useGetStepTrackerByDate(date: Date) {
 
   useEffect(() => {
     repository.getStepTrackerbyDate(date).then(setStepTracker);
-  }, [date]);
+  }, [date, repository]);
 
   return stepTracker;
 }
@@ -35,7 +35,7 @@ export function useGetStepTrackersBetween(from: Date, to: Date) {
 
   useEffect(() => {
     repository.getSteptrackersBetween(from, to).then(setStepTrackers);
-  }, [from, to]);
+  }, [from, to, repository]);
 
   return stepTrackers;
 }

@@ -1,10 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Pedometer } from 'expo-sensors';
-import {
-  useAddOrUpdateStepTracker,
-  useGetStepTrackerByDate,
-} from '@/hooks/stepTrackerHook';
 import { syncSteps7Days } from '../services/sync';
 import { useFocusEffect } from "expo-router";
 import { RepoProvider, useStepRepo } from '@/providers/repositoryProviders';
@@ -13,53 +9,45 @@ export default function Index() {
   const [isPedometerAvailable, setIsPedometerAvailable] = useState<string>('checking');
   const [pastStepCount, setPastStepCount] = useState<number>(0);
 
-  const todayStart = useMemo(() => {
+  const todayStart = useCallback(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
     return d;
   }, [Date.now()]);
 
-  const addOrUpdateStepTracker = useAddOrUpdateStepTracker();
-  const getStepTrackerByDate = useGetStepTrackerByDate(todayStart);
   const repository = useStepRepo();
 
   useEffect(() => {
-    let subscription: any;
+  let interval: ReturnType<typeof setInterval>;
 
-    const setupPedometer = async () => {
-      const isAvailable = await Pedometer.isAvailableAsync();
-      setIsPedometerAvailable(String(isAvailable));
+  const setupPedometer = async () => {
+    const isAvailable = await Pedometer.isAvailableAsync();
+    setIsPedometerAvailable(String(isAvailable));
 
-      if (!isAvailable) return;
+    if (!isAvailable) return;
 
+    const updateSteps = async () => {
       const end = new Date();
-      const { steps } = await Pedometer.getStepCountAsync(todayStart, end);
+      const { steps } = await Pedometer.getStepCountAsync(todayStart(), end);
+
       setPastStepCount(steps);
-
-      subscription = Pedometer.watchStepCount(async () => {
-        const end = new Date();
-        const { steps } = await Pedometer.getStepCountAsync(todayStart, end);
-
-        setPastStepCount(steps);
-
-        addOrUpdateStepTracker({
-          date: todayStart,
-          steps,
-        }, false);
-      });
     };
+    updateSteps()
 
-    setupPedometer();
+    interval = setInterval(updateSteps, 5 * 1000);
+  };
 
-    return () => {
-      subscription?.remove?.();
-    };
-  }, [todayStart, addOrUpdateStepTracker]);
+  setupPedometer();
+
+  return () => {
+    if (interval) clearInterval(interval);
+  };
+}, [todayStart]);
 
   useFocusEffect(
     useCallback(() => {
       syncSteps7Days(repository);
-    }, [])
+    }, [repository])
   );
 
   return (
@@ -70,9 +58,6 @@ export default function Index() {
       </Text>
       <Text>
         Steps taken in the last 24 hours: {pastStepCount}
-      </Text>
-      <Text>
-        Step tracker for today: {getStepTrackerByDate ? JSON.stringify(getStepTrackerByDate) : 'No data'}
       </Text>
     </View>
     </RepoProvider>

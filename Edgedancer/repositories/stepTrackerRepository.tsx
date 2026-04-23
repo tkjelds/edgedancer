@@ -2,8 +2,7 @@ import { stepTracker } from '@/models/stepTracker';
 import { toDomain, toRow } from '@/models/stepMapper';
 import { IStepTrackerDao } from '@/data/datasource/IstepTrackerDao';
 
-// Inject the interface here 
-export const createStepTrackerRepository = (dao: IStepTrackerDao) => {
+export const stepTrackerFactory = (dao: IStepTrackerDao) => {
   
   const stepTrackerExists = async (date: Date): Promise<boolean> => {
     return await dao.exists(date);

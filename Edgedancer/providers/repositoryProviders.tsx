@@ -1,11 +1,21 @@
 import React, { createContext, useContext, useMemo } from 'react';
 import { stepTrackerDao } from '@/data/datasource/stepTrackerDao';
-import { createStepTrackerRepository } from '@/repositories/stepTrackerRepository';
+import { stepTrackerFactory } from '@/repositories/stepTrackerRepository';
+import { IStepTrackerDao } from '@/data/datasource/IstepTrackerDao';
 
-const RepoContext = createContext<ReturnType<typeof createStepTrackerRepository> | null>(null);
+const RepoContext = createContext<ReturnType<typeof stepTrackerFactory> | null>(null);
 
-export const RepoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const repository = useMemo(() => createStepTrackerRepository(stepTrackerDao), []);
+
+type RepoProviderProps = {
+  children: React.ReactNode;
+  dao?: IStepTrackerDao;
+};
+
+export const RepoProvider: React.FC<RepoProviderProps> = ({
+  children,
+  dao = stepTrackerDao,
+}) => {
+  const repository = useMemo(() => stepTrackerFactory(dao), [dao]);
 
   return (
     <RepoContext.Provider value={repository}>

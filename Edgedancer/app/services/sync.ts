@@ -1,6 +1,4 @@
-import { useStepRepo } from "@/providers/repositoryProviders";
 import { Pedometer } from "expo-sensors";
-
 
 export async function syncSteps7Days(repository: any) {
   const available = await Pedometer.isAvailableAsync();

@@ -1,7 +1,6 @@
-import { useGetStepTrackersBetween, useStepTrackers } from "@/hooks/stepTrackerHook";
-import { stepTracker } from "@/models/stepTracker";
+import { useGetStepTrackersBetween, } from "@/hooks/stepTrackerHook";
 import { useFocusEffect } from "expo-router";
-import { use, useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Text, View } from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { syncSteps7Days } from "../services/sync";
@@ -26,7 +25,7 @@ export default function History() {
   useFocusEffect(
     useCallback(() => {
       syncSteps7Days(repository);
-    }, [])
+    }, [repository])
   );
   // useFocusEffect(
   //   useCallback(() => {
