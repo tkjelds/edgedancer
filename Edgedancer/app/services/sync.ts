@@ -1,11 +1,11 @@
 import { stepRepositoryFactory } from "@/repositories/stepRepository";
 import { Pedometer } from "expo-sensors";
 
-export async function syncSteps7Days(repository: ReturnType<typeof stepRepositoryFactory>) {
+export async function syncSteps10Days(repository: ReturnType<typeof stepRepositoryFactory>) {
   const available = await Pedometer.isAvailableAsync();
   if (!available) return;
   const start = new Date();
-  start.setDate(start.getDate() - 7);
+  start.setDate(start.getDate() - 10);
   start.setHours(0, 0, 0, 0);
 
   for (let i = 0; i < 10; i++) {

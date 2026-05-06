@@ -1,7 +1,7 @@
 import { StepRow } from "@/models/stepRow";
 import { getDB } from "../db";
 
-export const stepDao = {
+export const stepDAOSQL  = {
     async getAll(): Promise<StepRow[]> {
         return await getDB().then(db => db.getAllAsync("SELECT * FROM STEPTRACKER")) as StepRow[]
     },

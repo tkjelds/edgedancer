@@ -1,6 +1,6 @@
 import { useCallback, useContext } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { syncSteps7Days } from '../services/sync';
+import { syncSteps10Days } from '../services/sync';
 import { useFocusEffect } from "expo-router";
 import { RepoContext } from '@/providers/repositoryProviders';
 import { usePedometer } from '@/hooks/pedometerHook';
@@ -43,7 +43,7 @@ export default function Index() {
 
   useFocusEffect(
     useCallback(() => {
-      syncSteps7Days(repository);
+      syncSteps10Days(repository);
     }, [repository])
   );
 

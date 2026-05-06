@@ -2,7 +2,7 @@ import React from 'react';
 import History from '@/app/(tabs)/history';
 import { render, waitFor } from '@testing-library/react-native';
 import { RepoProvider } from '@/providers/repositoryProviders';
-import { createMockStepTrackerDao } from '../__mocks__/mockStepTrackerDAO';
+import { createMockStepTrackerDao } from '../../__mocks__/mockStepTrackerDAO';
 
 jest.mock('expo-router', () => {
   const actual = jest.requireActual('expo-router');

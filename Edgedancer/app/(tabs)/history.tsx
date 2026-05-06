@@ -3,7 +3,7 @@ import { useFocusEffect } from "expo-router";
 import { useCallback, useContext, useState } from "react";
 import { Text, View } from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { syncSteps7Days } from "../services/sync";
+import { syncSteps10Days } from "../services/sync";
 import { RepoContext} from "@/providers/repositoryProviders";
 
 
@@ -24,7 +24,7 @@ export default function History() {
 
   useFocusEffect(
     useCallback(() => {
-      syncSteps7Days(repository);
+      syncSteps10Days(repository);
     }, [repository])
   );
   // useFocusEffect(
