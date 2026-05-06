@@ -1,11 +1,11 @@
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
 import { Text, View } from "react-native";
 import { syncSteps7Days } from "../services/sync";
 import { useFocusEffect } from "expo-router";
-import { useStepRepo } from "@/providers/repositoryProviders";
+import { RepoContext} from "@/providers/repositoryProviders";
 
 export default function Alarms() {
-  const repository = useStepRepo();
+  const repository = useContext(RepoContext)
   useFocusEffect(
     useCallback(() => {
       syncSteps7Days(repository);

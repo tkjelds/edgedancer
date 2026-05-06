@@ -1,14 +1,14 @@
-import { useGetStepTrackersBetween, } from "@/hooks/stepTrackerHook";
+import { useGetStepsInRange, } from "@/hooks/stepHook";
 import { useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { Text, View } from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { syncSteps7Days } from "../services/sync";
-import { useStepRepo } from "@/providers/repositoryProviders";
+import { RepoContext} from "@/providers/repositoryProviders";
 
 
 export default function History() {
-  const repository = useStepRepo();
+  const repository = useContext(RepoContext);
   const [from, setFrom] = useState<Date>(() => {
     const d = new Date();
     d.setDate(d.getDate() - 7);
@@ -20,7 +20,7 @@ export default function History() {
     d.setHours(0,0,0,0);
     return d; 
   });
-  const stepTrackersBetween = useGetStepTrackersBetween(from, to);
+  const stepTrackersBetween = useGetStepsInRange(from, to);
 
   useFocusEffect(
     useCallback(() => {

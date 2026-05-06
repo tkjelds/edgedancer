@@ -1,17 +1,17 @@
-import { stepTracker } from "./stepTracker"
-import { stepTrackerRow } from "./stepTrackerRow"
+import { Step } from "./step"
+import { StepRow } from "./stepRow"
 
-export function toDomain(DAO: stepTrackerRow): stepTracker{
+export function toDomain(stepRow: StepRow): Step{
     return {
-        date: new Date(DAO.date),
-        steps: DAO.steps,
+        date: new Date(stepRow.date),
+        steps: stepRow.steps,
     }
 }
-export function toRow(stepTracker: stepTracker, finished: boolean): stepTrackerRow{
-    stepTracker.date.setHours(0,0,0,0);
+export function toRow(step: Step, finished: boolean): StepRow{
+    step.date.setHours(0,0,0,0);
     return {
-        date: stepTracker.date.toISOString(),
-        steps: stepTracker.steps,
+        date: step.date.toISOString(),
+        steps: step.steps,
         lastUpdated: new Date().toISOString(),
         finished: finished
     }

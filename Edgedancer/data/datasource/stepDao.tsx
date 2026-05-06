@@ -1,22 +1,22 @@
-import { stepTrackerRow } from "@/models/stepTrackerRow";
+import { StepRow } from "@/models/stepRow";
 import { getDB } from "../db";
 
-export const stepTrackerDao = {
-    async getAll(): Promise<stepTrackerRow[]> {
-        return await getDB().then(db => db.getAllAsync("SELECT * FROM STEPTRACKER")) as stepTrackerRow[]
+export const stepDao = {
+    async getAll(): Promise<StepRow[]> {
+        return await getDB().then(db => db.getAllAsync("SELECT * FROM STEPTRACKER")) as StepRow[]
     },
 
-    async getByDate(date: Date): Promise<stepTrackerRow | null> {
+    async getByDate(date: Date): Promise<StepRow | null> {
         const db = await getDB();
         const row = await db.getFirstAsync(
             `SELECT * FROM STEPTRACKER WHERE date = ?`,
             [date.toISOString()]
-        ) as stepTrackerRow | null;
+        ) as StepRow | null;
         
         return row 
     },
     
-    async insert(row: stepTrackerRow) {
+    async insert(row: StepRow) {
         const { date, steps, lastUpdated, finished } = row;
         await getDB().then(db => db.runAsync(
             `INSERT INTO STEPTRACKER (date, steps, lastUpdated, finished) VALUES (?, ?, ?, ?)`,
@@ -24,7 +24,7 @@ export const stepTrackerDao = {
         ));
     },
 
-    async update(row: stepTrackerRow) {
+    async update(row: StepRow) {
         const { date, steps, lastUpdated, finished } = row;
         await getDB().then(db => db.runAsync(
             `UPDATE STEPTRACKER SET steps = ?, lastUpdated = ?, finished = ? WHERE date = ?`,
@@ -41,11 +41,11 @@ export const stepTrackerDao = {
         return !!row;
     },
 
-    async getBetweenDates(from: Date, to: Date): Promise<stepTrackerRow[]> {
+    async getBetweenDates(from: Date, to: Date): Promise<StepRow[]> {
         const db = await getDB();
         const rows = await db.getAllAsync(
             `SELECT * FROM STEPTRACKER WHERE date BETWEEN ? AND ?`,
             [from.toISOString(),to.toISOString()]);
-        return await rows as stepTrackerRow[];
+        return await rows as StepRow[];
     },
 }

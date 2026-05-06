@@ -1,30 +1,30 @@
-import { stepTracker } from '@/models/stepTracker';
+import { Step } from '@/models/step';
 import { toDomain, toRow } from '@/models/stepMapper';
-import { IStepTrackerDao } from '@/data/datasource/IstepTrackerDao';
+import { IStepDao } from '@/data/datasource/IStepDao';
 
-export const stepTrackerFactory = (dao: IStepTrackerDao) => {
+export const stepRepositoryFactory = (dao: IStepDao) => {
   
-  const stepTrackerExists = async (date: Date): Promise<boolean> => {
+  const stepExists = async (date: Date): Promise<boolean> => {
     return await dao.exists(date);
   };
 
-  const addStepTracker = async (st: stepTracker, finished: boolean): Promise<void> => {
+  const addStep = async (st: Step, finished: boolean): Promise<void> => {
     const row = toRow(st, finished);
     await dao.insert(row);
   };
 
-  const updateStepTracker = async (st: stepTracker, finished: boolean): Promise<void> => {
+  const updateStep = async (st: Step, finished: boolean): Promise<void> => {
     const row = toRow(st, finished);
     await dao.update(row);
   };
 
   return {
-    async getStepTrackers(): Promise<stepTracker[]> {
+    async getSteps(): Promise<Step[]> {
       const rows = await dao.getAll();
       return rows.map(row => toDomain(row));
     },
 
-    async getStepTrackerbyDate(date: Date): Promise<stepTracker | null> {
+    async getStepByDate(date: Date): Promise<Step | null> {
       const normalizedDate = new Date(date);
       normalizedDate.setHours(0, 0, 0, 0);
       
@@ -32,20 +32,20 @@ export const stepTrackerFactory = (dao: IStepTrackerDao) => {
       return row ? toDomain(row) : null;
     },
 
-    async addOrUpdateStepTracker(st: stepTracker, finished: boolean): Promise<void> {
+    async addOrUpdateStep(st: Step, finished: boolean): Promise<void> {
       const normalizedDate = new Date(st.date);
       normalizedDate.setHours(0, 0, 0, 0);
       
-      const exists = await stepTrackerExists(normalizedDate);
+      const exists = await stepExists(normalizedDate);
       
       if (exists) {
-        await updateStepTracker(st, finished);
+        await updateStep(st, finished);
       } else {
-        await addStepTracker(st, finished);
+        await addStep(st, finished);
       }
     },
 
-    async getSteptrackersBetween(from: Date, to: Date): Promise<stepTracker[]> {
+    async getStepsInRange(from: Date, to: Date): Promise<Step[]> {
       const dFrom = new Date(from);
       dFrom.setHours(0, 0, 0, 0);
       

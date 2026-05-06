@@ -1,36 +1,33 @@
-import { stepTrackerRow } from "@/models/stepTrackerRow";
+import { StepRow } from "@/models/stepRow";
 
-const store = new Map<string, stepTrackerRow>();
-
-const key = (date: Date | string) =>
-  typeof date === "string" ? date : date.toISOString();
+const store = new Map<string, StepRow>();
 
 export const createMockStepTrackerDao = () => {
   return {
-    async getAll(): Promise<stepTrackerRow[]> {
+    async getAll(): Promise<StepRow[]> {
       return Array.from(store.values());
     },
 
-    async getByDate(date: Date): Promise<stepTrackerRow | null> {
-      return store.get(key(date)) ?? null;
+    async getByDate(date: Date): Promise<StepRow | null> {
+      return store.get(date.toISOString()) ?? null;
     },
 
-    async insert(row: stepTrackerRow) {
-      store.set(key(row.date), row);
+    async insert(row: StepRow) {
+      store.set(row.date, row);
     },
 
-    async update(row: stepTrackerRow) {
-      store.set(key(row.date), {
-        ...store.get(key(row.date)),
+    async update(row: StepRow) {
+      store.set(row.date, {
+        ...store.get(row.date),
         ...row,
       });
     },
 
     async exists(date: Date): Promise<boolean> {
-      return store.has(key(date));
+      return store.has(date.toISOString());
     },
 
-    async getBetweenDates(from: Date, to: Date): Promise<stepTrackerRow[]> {
+    async getBetweenDates(from: Date, to: Date): Promise<StepRow[]> {
       const fromTime = new Date(from).getTime();
       const toTime = new Date(to).getTime();
 
@@ -38,11 +35,6 @@ export const createMockStepTrackerDao = () => {
         const t = new Date(row.date).getTime();
         return t >= fromTime && t <= toTime;
       });
-    },
-
-    // 🔥 test helper (not in production DAO)
-    __reset() {
-      store.clear();
     },
   };
 };

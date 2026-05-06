@@ -1,48 +1,46 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useContext } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Pedometer } from 'expo-sensors';
 import { syncSteps7Days } from '../services/sync';
 import { useFocusEffect } from "expo-router";
-import { RepoProvider, useStepRepo } from '@/providers/repositoryProviders';
+import { RepoContext } from '@/providers/repositoryProviders';
+import { usePedometer } from '@/hooks/pedometerHook';
 
 export default function Index() {
-  const [isPedometerAvailable, setIsPedometerAvailable] = useState<string>('checking');
-  const [pastStepCount, setPastStepCount] = useState<number>(0);
+  //const [isPedometerAvailable, setIsPedometerAvailable] = useState<string>('checking');
+ // const [pastStepCount, setPastStepCount] = useState<number>(0);
+  const { isAvailable, stepCount } = usePedometer();
+  const repository = useContext(RepoContext);
 
-  const todayStart = useCallback(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d;
-  }, [Date.now()]);
+//   useEffect(() => {
+//   let interval: ReturnType<typeof setInterval>;
 
-  const repository = useStepRepo();
+//   const setupPedometer = async () => {
+//     const isAvailable = await Pedometer.isAvailableAsync();
+//     setIsPedometerAvailable(String(isAvailable));
 
-  useEffect(() => {
-  let interval: ReturnType<typeof setInterval>;
+//     if (!isAvailable) return;
 
-  const setupPedometer = async () => {
-    const isAvailable = await Pedometer.isAvailableAsync();
-    setIsPedometerAvailable(String(isAvailable));
+//     const updateSteps = async () => {
+//       const start = new Date();
+//       start.setHours(0, 0, 0, 0);
+//       const end = new Date()
 
-    if (!isAvailable) return;
+//       const { steps } = await Pedometer.getStepCountAsync(start, end);
 
-    const updateSteps = async () => {
-      const end = new Date();
-      const { steps } = await Pedometer.getStepCountAsync(todayStart(), end);
+//       setPastStepCount(steps);
+//     };
+//     updateSteps()
 
-      setPastStepCount(steps);
-    };
-    updateSteps()
+//     interval = setInterval(updateSteps, 5 * 1000);
+//   };
 
-    interval = setInterval(updateSteps, 5 * 1000);
-  };
+//   setupPedometer();
 
-  setupPedometer();
-
-  return () => {
-    if (interval) clearInterval(interval);
-  };
-}, [todayStart]);
+//   return () => {
+//     if (interval) clearInterval(interval);
+//   };
+// }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -51,16 +49,14 @@ export default function Index() {
   );
 
   return (
-    <RepoProvider>
     <View style={styles.container}>
       <Text>
-        Pedometer.isAvailableAsync(): {isPedometerAvailable}
+        Pedometer.isAvailableAsync(): {isAvailable}
       </Text>
       <Text>
-        Steps taken in the last 24 hours: {pastStepCount}
+        Steps taken in the last 24 hours: {stepCount}
       </Text>
     </View>
-    </RepoProvider>
   );
 }
 

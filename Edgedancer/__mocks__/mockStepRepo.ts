@@ -1,9 +1,9 @@
 // test/mocks/mockStepRepo.ts
-import { stepTracker } from '@/models/stepTracker';
+import { Step } from '@/models/step';
 
 export const createMockStepRepo = () => ({
-  getStepTrackers: jest.fn<Promise<stepTracker[]>, []>(),
-  getStepTrackerbyDate: jest.fn<Promise<stepTracker | null>, [Date]>(),
-  addOrUpdateStepTracker: jest.fn<Promise<void>, [stepTracker, boolean]>(),
-  getSteptrackersBetween: jest.fn<Promise<stepTracker[]>, [Date, Date]>(),
+  getStepTrackers: jest.fn<Promise<Step[]>, []>(),
+  getStepTrackerbyDate: jest.fn<Promise<Step | null>, [Date]>(),
+  addOrUpdateStepTracker: jest.fn<Promise<void>, [Step, boolean]>(),
+  getSteptrackersBetween: jest.fn<Promise<Step[]>, [Date, Date]>(),
 });
