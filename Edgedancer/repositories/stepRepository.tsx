@@ -17,7 +17,7 @@ export const stepRepositoryFactory = (dao: IStepDao) => {
     const row = toRow(st, finished);
     await dao.update(row);
   };
-
+  
   return {
     async getSteps(): Promise<Step[]> {
       const rows = await dao.getAll();

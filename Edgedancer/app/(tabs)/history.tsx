@@ -1,4 +1,4 @@
-import { useGetStepsInRange, } from "@/hooks/stepHook";
+import { useGetStepsInRange, } from "@/hooks/stepHooks";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useContext, useState } from "react";
 import { Text, View } from "react-native";

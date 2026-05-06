@@ -1,6 +1,6 @@
 import React from 'react';
 import History from '@/app/(tabs)/history';
-import { render } from '@testing-library/react-native';
+import { render, waitFor } from '@testing-library/react-native';
 import { RepoProvider } from '@/providers/repositoryProviders';
 import { createMockStepTrackerDao } from '../__mocks__/mockStepTrackerDAO';
 
@@ -16,6 +16,7 @@ jest.mock('expo-router', () => {
     },
   };
 });
+
 describe('<History />', () => {
   const mockDao = createMockStepTrackerDao();
 
@@ -27,7 +28,8 @@ describe('<History />', () => {
 
   test('Text renders correctly on History', () => {
     const { getByText } = render(<History />, { wrapper });
-
-    getByText('Edit app/history.tsx to edit this screen.');
+    waitFor(() => {
+      getByText('Edit app/history.tsx to edit this screen.');
+    })
   });
 });

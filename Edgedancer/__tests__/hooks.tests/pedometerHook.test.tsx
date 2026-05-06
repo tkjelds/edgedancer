@@ -14,8 +14,6 @@ jest.mock('expo-sensors', () => ({
 
 describe("Init_pedometer with no data", () => {
   it("should return the initial values for isAvailable and stepCount", async () => {
-    // let stepCountTest = -1;
-    // let isAvailableTest = "test";
     const { result } = renderHook(() => usePedometer());
 
 

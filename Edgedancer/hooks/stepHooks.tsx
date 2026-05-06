@@ -6,18 +6,17 @@ import { useContext, useEffect, useState } from 'react';
 export function useGetSteps() {
   const [stepTrackers, setStepTrackers] = useState<Step[]>([]);
   const repository = useContext(RepoContext);
-  const fetchStepTrackers = () => {
-    return repository
+  
+  useEffect(() => {
+    repository
       .getSteps()
       .then(setStepTrackers);
-  };
-
-  useEffect(() => {
-    fetchStepTrackers();
   }, []);
 
-  return { stepTrackers, refetch: fetchStepTrackers };
+  return { stepTrackers};
 }
+
+
 export function useGetStepByDate(date: Date) {
   const repository = useContext(RepoContext);
   const [stepTracker, setStepTracker] = useState<Step|null>(null);
@@ -28,6 +27,8 @@ export function useGetStepByDate(date: Date) {
 
   return stepTracker;
 }
+
+
 export function useGetStepsInRange(from: Date, to: Date) {
   const [stepTrackers, setStepTrackers] = useState<Step[]>([]);
   const repository = useContext(RepoContext);

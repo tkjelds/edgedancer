@@ -1,6 +1,5 @@
-import { useState, useEffect, useMemo, useCallback, useContext } from 'react';
+import { useCallback, useContext } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Pedometer } from 'expo-sensors';
 import { syncSteps7Days } from '../services/sync';
 import { useFocusEffect } from "expo-router";
 import { RepoContext } from '@/providers/repositoryProviders';

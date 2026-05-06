@@ -1,6 +1,5 @@
 import { stepRepositoryFactory } from "@/repositories/stepRepository";
 import { Pedometer } from "expo-sensors";
-import { useContext } from "react";
 
 export async function syncSteps7Days(repository: ReturnType<typeof stepRepositoryFactory>) {
   const available = await Pedometer.isAvailableAsync();
