@@ -1,8 +1,6 @@
-import { createRepoWrapper, createRepoWrapperWithDao } from "@/__mocks__/mockRepoProvider";
-import { createMockStepTrackerDao } from "@/__mocks__/mockStepTrackerDAO";
+import { createRepoWrapper} from "@/__mocks__/mockRepoProvider";
 import { useGetStepByDate, useGetSteps, useGetStepsInRange } from "@/hooks/stepHooks";
 import { Step } from "@/models/step";
-import { stepRepositoryFactory } from "@/repositories/stepRepository";
 import { renderHook, waitFor } from "@testing-library/react-native";
 
 export const mockSteps: Step[] = [
