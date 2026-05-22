@@ -1,7 +1,6 @@
 import { usePedometer } from "@/hooks/pedometerHook";
 import { renderHook, waitFor } from "@testing-library/react-native";
 import { Pedometer } from "expo-sensors";
-import { act } from "react";
 
 jest.mock('expo-sensors', () => ({
   Pedometer: {
@@ -34,7 +33,7 @@ describe("Pedometer with mocked sensor data", () => {
     mockedPedometer.isAvailableAsync.mockResolvedValue(
         new Promise(((resolve) => {resolve(true)}))
     );
-    });
+  });
 
   it("returns mocked step count", async () => {
     const { result } = renderHook(() => usePedometer());

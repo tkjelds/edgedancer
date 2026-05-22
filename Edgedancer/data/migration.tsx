@@ -29,7 +29,6 @@ export async function populateDB() {
     try {
         const db = await getDB();
 
-        const now = new Date().setHours(0,0,0,0);
         const dates = Array.from({ length: 10}, (_, i) => {
             const date = new Date();
             date.setHours(0,0,0,0);
